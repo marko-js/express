@@ -1,0 +1,64 @@
+{
+  "name": "@marko/express",
+  "description": "Render Marko templates in an express application.",
+  "version": "1.0.0",
+  "author": "Dylan Piercey <dpiercey@ebay.com>",
+  "bugs": "https://github.com/marko-js/express/issues",
+  "peerDependencies": {
+    "express": "^4 || ^5",
+    "marko": "^4 || ^5"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^9.1.2",
+    "@commitlint/config-conventional": "^9.1.1",
+    "@marko/jest": "^3.2.0",
+    "@types/express": "^4.17.7",
+    "@types/jest": "^26.0.9",
+    "@types/node": "^14.0.27",
+    "@types/node-fetch": "^2.5.7",
+    "@typescript-eslint/eslint-plugin": "^3.9.0",
+    "@typescript-eslint/parser": "^3.9.0",
+    "codecov": "^3.7.2",
+    "eslint": "^7.6.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-jest": "^23.20.0",
+    "express": "^4.17.1",
+    "husky": "^4.2.5",
+    "jest": "^26.4.0",
+    "lint-staged": "^10.2.11",
+    "marko": "^4.22.6",
+    "node-fetch": "^2.6.0",
+    "prettier": "^2.0.5",
+    "standard-version": "^8.0.2",
+    "ts-jest": "^26.2.0",
+    "typescript": "^3.9.7"
+  },
+  "files": [
+    "dist"
+  ],
+  "homepage": "https://github.com/marko-js/express",
+  "jsnext": "dist/esm/index.js",
+  "keywords": [
+    "marko",
+    "express"
+  ],
+  "license": "MIT",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/marko-js/express"
+  },
+  "scripts": {
+    "build": "tsc -b tsconfig.esm.json tsconfig.cjs.json",
+    "ci:report": "cat coverage/lcov.info | codecov",
+    "ci:test": "jest --ci --coverage",
+    "format": "prettier \"**/*.{json,md,js,ts}\" --write",
+    "lint": "tsc --noEmit && eslint -f codeframe --fix './src/**/*.ts'",
+    "prepublishOnly": "npm run build",
+    "release": "standard-version",
+    "test": "jest --watch",
+    "test:inspect": "node --inspect=0.0.0.0 $(which jest) --watch --runInBand --testTimeout 99999999"
+  },
+  "types": "dist/esm/index.d.ts"
+}
