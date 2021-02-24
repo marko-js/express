@@ -37,12 +37,11 @@ test("Error In Template", async () => {
           err: Error,
           req: express.Request,
           res: express.Response,
-          next: unknown
+          next: () => void
         ) => {
-          expect(
-            err.message && err.message.slice(0, err.message.indexOf("\n"))
-          ).toMatchInlineSnapshot(`"Error: fail"`);
+          expect(err.message).toMatchInlineSnapshot(`"fail"`);
           res.status(500).send("Something broke!");
+          next();
         }
       )
   );
