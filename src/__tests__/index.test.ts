@@ -4,6 +4,8 @@ import express from "express";
 import fetch from "node-fetch";
 import markoMiddleware from "../index";
 import SimpleTemplate from "./fixtures/simple.marko";
+import DynamicTemplate from "./fixtures/dynamic.marko";
+import GlobalsTemplate from "./fixtures/globals.marko";
 import ErrorTemplate from "./fixtures/error.marko";
 
 test("Simple Template", async () => {
@@ -23,6 +25,45 @@ test("Simple Template", async () => {
     `"chunked"`
   );
   expect(html).toMatchInlineSnapshot(`"<div>Hello world</div>"`);
+});
+
+test("Dynamic Template", async () => {
+  const { res, html } = await fetchHtml(
+    express()
+      .use(markoMiddleware())
+      .use((req, res) => {
+        res.marko(DynamicTemplate, { name: "Dylan" });
+      })
+  );
+
+  expect(res.status).toMatchInlineSnapshot(`200`);
+  expect(res.headers.get("content-type")).toMatchInlineSnapshot(
+    `"text/html; charset=utf-8"`
+  );
+  expect(res.headers.get("transfer-encoding")).toMatchInlineSnapshot(
+    `"chunked"`
+  );
+  expect(html).toMatchInlineSnapshot(`"<div>Hello Dylan</div>"`);
+});
+
+test("Globals Template", async () => {
+  const { res, html } = await fetchHtml(
+    express()
+      .use(markoMiddleware())
+      .use((req, res) => {
+        res.locals.greeting = "Goodbye";
+        res.marko(GlobalsTemplate, { $global: { name: "Michael" } });
+      })
+  );
+
+  expect(res.status).toMatchInlineSnapshot(`200`);
+  expect(res.headers.get("content-type")).toMatchInlineSnapshot(
+    `"text/html; charset=utf-8"`
+  );
+  expect(res.headers.get("transfer-encoding")).toMatchInlineSnapshot(
+    `"chunked"`
+  );
+  expect(html).toMatchInlineSnapshot(`"<div>Goodbye Michael</div>"`);
 });
 
 test("Error In Template", async () => {
