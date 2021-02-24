@@ -56,7 +56,7 @@
     "ci:report": "codecov",
     "ci:test": "jest --ci --coverage",
     "format": "npm run lint:eslint -- --fix && npm run lint:prettier -- --write",
-    "lint": "tsc --noEmit && npm run lint:eslint && npm run lint:prettier -l",
+    "lint": "tsc --noEmit && npm run lint:eslint && npm run lint:prettier -- -l",
     "lint:eslint": "eslint -f visualstudio .",
     "lint:prettier": "prettier \"**/*{.ts,.js,.json,.md,.yml,rc}\"",
     "prepublishOnly": "npm run build",
