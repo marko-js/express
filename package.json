@@ -4,10 +4,6 @@
   "version": "1.0.0",
   "author": "Dylan Piercey <dpiercey@ebay.com>",
   "bugs": "https://github.com/marko-js/express/issues",
-  "peerDependencies": {
-    "express": "^4 || ^5",
-    "marko": "^4 || ^5"
-  },
   "devDependencies": {
     "@commitlint/cli": "^12.0.0",
     "@commitlint/config-conventional": "^12.0.0",
@@ -41,22 +37,28 @@
   "homepage": "https://github.com/marko-js/express",
   "jsnext": "dist/esm/index.js",
   "keywords": [
-    "marko",
-    "express"
+    "express",
+    "marko"
   ],
   "license": "MIT",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
+  "peerDependencies": {
+    "express": "^4 || ^5",
+    "marko": "^4 || ^5"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/marko-js/express"
   },
   "scripts": {
     "build": "tsc -b tsconfig.esm.json tsconfig.cjs.json",
-    "ci:report": "cat coverage/lcov.info | codecov",
+    "ci:report": "codecov",
     "ci:test": "jest --ci --coverage",
-    "format": "prettier \"**/*.{json,md,js,ts}\" --write",
-    "lint": "tsc --noEmit && eslint -f codeframe --fix './src/**/*.ts'",
+    "format": "npm run lint:eslint -- --fix && npm run lint:prettier -- --write",
+    "lint": "tsc --noEmit && npm run lint:eslint && npm run lint:prettier -l",
+    "lint:eslint": "eslint -f visualstudio .",
+    "lint:prettier": "prettier \"**/*{.ts,.js,.json,.md,.yml,rc}\"",
     "prepublishOnly": "npm run build",
     "release": "standard-version",
     "test": "jest --watch",

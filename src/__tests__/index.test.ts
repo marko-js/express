@@ -93,11 +93,11 @@ test("Error In Template", async () => {
 
 async function fetchHtml(app: Express) {
   const server = app.listen();
-  await new Promise((resolve) => server.once("listening", resolve));
+  await new Promise(resolve => server.once("listening", resolve));
   const res = await fetch(
     `http://localhost:${(server.address() as AddressInfo).port}`
   );
   const html = await res.text();
-  await new Promise((resolve) => server.close(resolve));
+  await new Promise(resolve => server.close(resolve));
   return { res, html };
 }
