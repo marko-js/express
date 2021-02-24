@@ -13,8 +13,8 @@
     <img src="https://img.shields.io/badge/styled_with-prettier-ff69b4.svg" alt="Styled with prettier"/>
   </a>
   <!-- CI -->
-  <a href="https://travis-ci.org/marko-js/express">
-  <img src="https://img.shields.io/travis/marko-js/express.svg" alt="Build status"/>
+  <a href="https://github.com/marko-js/express/actions/workflows/ci.yml">
+    <img src="https://github.com/marko-js/express/actions/workflows/ci.yml/badge.svg" alt="Build status"/>
   </a>
   <!-- Coverage -->
   <a href="https://codecov.io/gh/marko-js/express">
