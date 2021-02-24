@@ -4,10 +4,6 @@
   @marko/express
 	<br/>
 
-  <!-- Stability -->
-  <a href="https://nodejs.org/api/documentation.html#documentation_stability_index">
-    <img src="https://img.shields.io/badge/stability-stable-brightgreen.svg" alt="API Stability"/>
-  </a>
   <!-- Language -->
   <a href="http://typescriptlang.org">
     <img src="https://img.shields.io/badge/%3C%2F%3E-typescript-blue.svg" alt="TypeScript"/>
@@ -21,8 +17,8 @@
   <img src="https://img.shields.io/travis/marko-js/express.svg" alt="Build status"/>
   </a>
   <!-- Coverage -->
-  <a href="https://coveralls.io/github/marko-js/express">
-    <img src="https://img.shields.io/coveralls/marko-js/express.svg" alt="Test Coverage"/>
+  <a href="https://codecov.io/gh/marko-js/express">
+    <img src="https://codecov.io/gh/marko-js/express/branch/main/graph/badge.svg?token=KWZ4YNTZVY"/>
   </a>
   <!-- NPM Version -->
   <a href="https://npmjs.org/package/@marko/express">
@@ -32,13 +28,9 @@
   <a href="https://npmjs.org/package/@marko/express">
     <img src="https://img.shields.io/npm/dm/@marko/express.svg" alt="Downloads"/>
   </a>
-  <!-- Size -->
-  <a href="https://npmjs.org/package/@marko/express">
-    <img src="https://img.shields.io/badge/size-1.21kb-green.svg" alt="Browser Bundle Size"/>
-  </a>
 </h1>
 
-Render Marko templates in an express application.
+Render [Marko](https://markojs.com/) templates in an [`express`](http://expressjs.com/) application.
 
 # Installation
 
@@ -46,7 +38,9 @@ Render Marko templates in an express application.
 npm install @marko/express
 ```
 
-# Example
+# Examples
+
+## Setup
 
 ```javascript
 import express from "express";
@@ -64,6 +58,24 @@ app.get("/", (req, res) => {
 });
 ```
 
-## Code of Conduct
+## $global / out.global
+
+When calling `res.marko` the [`input.$global`](https://markojs.com/docs/rendering/#global-data) is automatically merged with [`app.locals`](http://expressjs.com/en/5x/api.html#app.locals) and [`res.locals`](http://expressjs.com/en/5x/api.html#res.locals) from [`express`](http://expressjs.com/). This makes it easy to set some global data via express middleware, eg:
+
+_middleware.js_
+
+```js
+export default (req, res, next) => {
+  res.locals.locale = "en-US";
+};
+```
+
+Then later in a template access via:
+
+```marko
+<div>${out.global.locale}</div>
+```
+
+# Code of Conduct
 
 This project adheres to the [eBay Code of Conduct](./.github/CODE_OF_CONDUCT.md). By participating in this project you agree to abide by its terms.
