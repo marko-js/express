@@ -16,8 +16,8 @@ declare module "express" {
 }
 
 export default function middleware() {
-  return (req: Request, res: Response, next: NextFunction): void => {
-    res.marko = res.marko || renderMarkoTemplate;
+  return (_req: Request, res: Response, next: NextFunction): void => {
+    res.marko = renderMarkoTemplate;
     next();
   };
 }
@@ -39,6 +39,5 @@ function renderMarkoTemplate<
   this.set("Content-Type", "text/html; charset=utf-8");
   template
     .render(input || ({ $global } as I), this)
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     .on("error", this.req!.next!);
 }

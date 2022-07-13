@@ -18,4 +18,4 @@ coverage
 .nyc_output
 
 # Test
-*.actual.*
+*actual*

@@ -12,7 +12,7 @@ test("Simple Template", async () => {
   const { res, html } = await fetchHtml(
     express()
       .use(markoMiddleware())
-      .use((req, res) => {
+      .use((_req, res) => {
         res.marko(SimpleTemplate);
       })
   );
@@ -31,7 +31,7 @@ test("Dynamic Template", async () => {
   const { res, html } = await fetchHtml(
     express()
       .use(markoMiddleware())
-      .use((req, res) => {
+      .use((_req, res) => {
         res.marko(DynamicTemplate, { name: "Dylan" });
       })
   );
@@ -50,7 +50,7 @@ test("Globals Template", async () => {
   const { res, html } = await fetchHtml(
     express()
       .use(markoMiddleware())
-      .use((req, res) => {
+      .use((_req, res) => {
         res.locals.greeting = "Goodbye";
         res.marko(GlobalsTemplate, { $global: { name: "Michael" } });
       })
@@ -70,13 +70,13 @@ test("Error In Template", async () => {
   const { res, html } = await fetchHtml(
     express()
       .use(markoMiddleware())
-      .use((req, res) => {
+      .use((_req, res) => {
         res.marko(ErrorTemplate);
       })
       .use(
         (
           err: Error,
-          req: express.Request,
+          _req: express.Request,
           res: express.Response,
           next: () => void
         ) => {
@@ -93,11 +93,11 @@ test("Error In Template", async () => {
 
 async function fetchHtml(app: Express) {
   const server = app.listen();
-  await new Promise(resolve => server.once("listening", resolve));
+  await new Promise((resolve) => server.once("listening", resolve));
   const res = await fetch(
     `http://localhost:${(server.address() as AddressInfo).port}`
   );
   const html = await res.text();
-  await new Promise(resolve => server.close(resolve));
+  await new Promise((resolve) => server.close(resolve));
   return { res, html };
 }
