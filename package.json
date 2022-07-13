@@ -1,7 +1,7 @@
 {
   "name": "@marko/express",
   "description": "Render Marko templates in an express application.",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "author": "Dylan Piercey <dpiercey@ebay.com>",
   "bugs": "https://github.com/marko-js/express/issues",
   "devDependencies": {
