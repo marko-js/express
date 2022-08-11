@@ -133,7 +133,7 @@ test("Midstream Redirect, HTML", async () => {
           return res.end("You need to login!");
         }
 
-        const promise = new Promise((resolve, reject) => {
+        const promise = new Promise((resolve) => {
           setTimeout(() => {
             res.redirect("/login.html");
             resolve("hello");
@@ -152,7 +152,7 @@ test("Midstream Redirect, Error", async () => {
   const { res, html } = await fetchHtml(
     express()
       .use(markoMiddleware())
-      .use((req, res) => {
+      .use((_req, res) => {
         res.write("Hello ");
 
         setTimeout(() => {
