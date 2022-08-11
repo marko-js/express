@@ -1,6 +1,7 @@
 import type { AddressInfo } from "net";
 import type { Express } from "express";
 import express from "express";
+import compression from "compression";
 import fetch, { Response } from "node-fetch";
 import markoMiddleware from "../index";
 import SimpleTemplate from "./fixtures/simple.marko";
@@ -148,20 +149,85 @@ test("Midstream Redirect, HTML", async () => {
   expect(html).toMatchInlineSnapshot(`"You need to login!"`);
 });
 
-test("Midstream Redirect, Error", async () => {
+test("Midstream Redirect, HTML, compression", async () => {
   const { res, html } = await fetchHtml(
     express()
+      .use(compression())
       .use(markoMiddleware())
-      .use((_req, res) => {
-        res.write("Hello ");
+      .use((req, res) => {
+        if (req.url === "/login.html") {
+          return res.end("You need to login!");
+        }
 
-        setTimeout(() => {
+        const promise = new Promise((resolve) => {
+          setTimeout(() => {
+            res.redirect("/login.html");
+            resolve("hello");
+          }, 50);
+        });
+
+        res.marko(AsyncTemplate, { promise });
+      })
+  );
+
+  expect(res.status).toMatchInlineSnapshot(`200`);
+  expect(html).toMatchInlineSnapshot(`"You need to login!"`);
+});
+
+test("Midstream Redirect, monkeypatched write", async () => {
+  let called = false;
+  const { res, html } = await fetchHtml(
+    express()
+      .use((_req, res, next) => {
+        const write = res.write as any;
+        // test that the write function is monkeypatched and has a callback
+        // (mostly to hit 100% coverage)
+        res.write = (data, callback) => {
+          return write.call(
+            res,
+            data,
+            callback ||
+              (() => {
+                called = true;
+              })
+          );
+        };
+        next();
+      })
+      .use(markoMiddleware())
+      .use((req, res) => {
+        if (req.url === "/login.html") {
+          return res.end("You need to login!");
+        }
+
+        res.setHeader("Content-Type", "text/html");
+        res.write("Hello ", () => {
           try {
             res.redirect("/login.html");
           } catch (e) {
             res.end((e as Error).message);
           }
-        }, 50);
+        });
+      })
+  );
+
+  expect(res.status).toMatchInlineSnapshot(`200`);
+  expect(html).toMatchInlineSnapshot(`"You need to login!"`);
+  expect(called).toBeTruthy();
+});
+
+test("Midstream Redirect, Error", async () => {
+  const { res, html } = await fetchHtml(
+    express()
+      .use(markoMiddleware())
+      .use((_req, res) => {
+        res.write("Hello ", () => {
+          try {
+            res.redirect("/login.html");
+          } catch (e) {
+            res.end((e as Error).message);
+          }
+        });
       })
   );
 
@@ -194,6 +260,13 @@ async function fetchHelper(
   for await (const chunk of res.body!) {
     const match = redirectPattern.exec(chunk.toString());
     if (match) {
+      let error: Error;
+      try {
+        await res.text();
+      } catch (e) {
+        error = e as Error;
+      }
+      expect(error!.message).toMatch("Premature close");
       return fetchHelper(server, match[1]);
     }
     html += chunk;
