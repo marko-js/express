@@ -1,5 +1,6 @@
 import type { EventEmitter } from "events";
 import type { Request, Response, NextFunction } from "express";
+import { redirectWithMidstreamSupport } from "./redirect";
 
 // newer versions of `@types/express`
 declare module "express-serve-static-core" {
@@ -18,6 +19,7 @@ declare module "express" {
 export default function middleware() {
   return (_req: Request, res: Response, next: NextFunction): void => {
     res.marko = renderMarkoTemplate;
+    res.redirect = redirectWithMidstreamSupport;
     next();
   };
 }

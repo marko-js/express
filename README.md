@@ -76,6 +76,10 @@ Then later in a template access via:
 <div>${out.global.locale}</div>
 ```
 
+## Redirects
+
+Allows `res.redirect` to redirect HTML responses that have already begun sending content. This is done by flushing a `<meta>` tag redirect with a `<script>` fallback before prematurely ending the response.
+
 # Code of Conduct
 
 This project adheres to the [eBay Code of Conduct](./.github/CODE_OF_CONDUCT.md). By participating in this project you agree to abide by its terms.
