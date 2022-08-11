@@ -76,6 +76,10 @@ Then later in a template access via:
 <div>${out.global.locale}</div>
 ```
 
+## Redirects
+
+Patches `res.redirect` so it can be used after the request has begun for HTML responses.
+
 # Code of Conduct
 
 This project adheres to the [eBay Code of Conduct](./.github/CODE_OF_CONDUCT.md). By participating in this project you agree to abide by its terms.
