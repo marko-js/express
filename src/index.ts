@@ -5,6 +5,7 @@ import type { Request, Response, NextFunction } from "express";
 declare module "express-serve-static-core" {
   interface Response {
     marko: typeof renderMarkoTemplate;
+    flush?: typeof noopThis;
   }
 }
 
@@ -12,12 +13,14 @@ declare module "express-serve-static-core" {
 declare module "express" {
   interface Response {
     marko: typeof renderMarkoTemplate;
+    flush?: typeof noopThis;
   }
 }
 
 export default function middleware() {
   return (_req: Request, res: Response, next: NextFunction): void => {
     res.marko = renderMarkoTemplate;
+    res.redirect = redirectWithMidstreamSupport;
     next();
   };
 }
@@ -40,4 +43,68 @@ function renderMarkoTemplate<
   template
     .render(input || ({ $global } as I), this)
     .on("error", this.req!.next!);
+}
+
+function redirectWithMidstreamSupport(
+  this: Response,
+  status: number,
+  redirectUrl: string
+): void;
+function redirectWithMidstreamSupport(
+  this: Response,
+  redirectUrl: string,
+  status: number
+): void;
+function redirectWithMidstreamSupport(
+  this: Response,
+  redirectUrl: string
+): void;
+function redirectWithMidstreamSupport(
+  this: Response,
+  p1: string | number,
+  p2?: string | number
+) {
+  const status = typeof p1 === "number" ? p1 : 302;
+  const redirectUrl = typeof p1 === "string" ? p1 : (p2 as string);
+
+  if (
+    !this.headersSent ||
+    !(this.getHeader("Content-Type") as string | undefined)?.startsWith(
+      "text/html"
+    )
+  ) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+    Object.getPrototypeOf(this).redirect.call(this, status, redirectUrl);
+  } else {
+    // already begun response, so we can't redirect with a status code
+    // but it is text/html, so we can redirect using <meta> refresh or location.href
+    const metaContent = JSON.stringify(`0;url=${redirectUrl}`);
+    const locationHref = JSON.stringify(redirectUrl);
+    this.write(`
+        <meta http-equiv=refresh content=${metaContent}>
+        <script>location.href=${locationHref}</script>
+    `);
+
+    // ensure the redirect is flushed when compression middleware is used
+    if (this.flush) this.flush();
+
+    // prevent any further output
+    this.write = noopFalse;
+    this.flush = this.end = noopThis;
+
+    // wait for the next tick to ensure content is flushed
+    setImmediate(() => {
+      // `destroy` instead of `end` so the client knows the response was incomplete
+      this.destroy();
+    });
+  }
+}
+
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+function noopThis(this: any) {
+  return this;
+}
+
+function noopFalse() {
+  return false;
 }
