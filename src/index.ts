@@ -68,14 +68,11 @@ function redirectWithMidstreamSupport(
   const redirectUrl = typeof p1 === "string" ? p1 : (p2 as string);
 
   if (
-    !this.headersSent ||
-    !(this.getHeader("Content-Type") as string | undefined)?.startsWith(
+    this.headersSent &&
+    (this.getHeader("Content-Type") as string | undefined)?.startsWith(
       "text/html"
     )
   ) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-    Object.getPrototypeOf(this).redirect.call(this, status, redirectUrl);
-  } else {
     // already begun response, so we can't redirect with a status code
     // but it is text/html, so we can redirect using <meta> refresh or location.href
     const metaContent = JSON.stringify(`0;url=${redirectUrl}`);
@@ -97,6 +94,10 @@ function redirectWithMidstreamSupport(
       // `destroy` instead of `end` so the client knows the response was incomplete
       this.destroy();
     });
+  } else {
+    // use the default redirect behavior
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+    Object.getPrototypeOf(this).redirect.call(this, status, redirectUrl);
   }
 }
 

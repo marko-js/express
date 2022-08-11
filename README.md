@@ -78,7 +78,7 @@ Then later in a template access via:
 
 ## Redirects
 
-Patches `res.redirect` so it can be used after the request has begun for HTML responses.
+Allows `res.redirect` to redirect HTML responses that have already begun sending content. This is done by flushing a `<meta>` tag redirect with a `<script>` fallback before prematurely ending the response.
 
 # Code of Conduct
 
