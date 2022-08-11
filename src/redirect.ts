@@ -1,20 +1,6 @@
 import type { Response } from "express";
 import { ServerResponse } from "http";
 
-// newer versions of `@types/express`
-declare module "express-serve-static-core" {
-  interface Response {
-    flush?: typeof noopThis;
-  }
-}
-
-// older versions of `@types/express`
-declare module "express" {
-  interface Response {
-    flush?: typeof noopThis;
-  }
-}
-
 export function redirectWithMidstreamSupport(
   this: Response,
   status: number,
