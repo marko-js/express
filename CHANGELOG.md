@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.0.1
+
+### Patch Changes
+
+- [#6](https://github.com/marko-js/express/pull/6) [`85092c1`](https://github.com/marko-js/express/commit/85092c1ca2e9303f9f275919fea968aff897f71f) Thanks [@mlrawlings](https://github.com/mlrawlings)! - feat: patch res.redirect to support midstream redirects
+
 ## 2.0.0
 
 ### Major Changes
