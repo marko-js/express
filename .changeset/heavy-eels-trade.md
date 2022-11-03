@@ -2,4 +2,4 @@
 "@marko/express": minor
 ---
 
-Add support for CSP Nonce in redirect scropt
+Add support for CSP Nonce in redirect script
