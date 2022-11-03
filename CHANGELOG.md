@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.1.0
+
+### Minor Changes
+
+- [#10](https://github.com/marko-js/express/pull/10) [`88cd7b0`](https://github.com/marko-js/express/commit/88cd7b050bf9a57f41fc98af058bd928d9f561e4) Thanks [@snyamathi](https://github.com/snyamathi)! - Add support for CSP Nonce in redirect script
+
 ## 2.0.1
 
 ### Patch Changes
