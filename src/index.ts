@@ -1,6 +1,6 @@
 import type { EventEmitter } from "events";
 import type { Request, Response, NextFunction } from "express";
-import { redirectWithMidstreamSupport } from "./redirect";
+import { createRedirectWithMidstreamSupportFn, redirectWithMidstreamSupport } from "./redirect";
 
 // newer versions of `@types/express`
 declare module "express-serve-static-core" {
@@ -19,6 +19,8 @@ declare module "express" {
 export default function middleware() {
   return (_req: Request, res: Response, next: NextFunction): void => {
     res.marko = renderMarkoTemplate;
+    // We don't have a handle to the cspNonce, if any so we start with
+    // a default function which may generate a script with no nonce attr
     res.redirect = redirectWithMidstreamSupport;
     next();
   };
@@ -36,6 +38,12 @@ function renderMarkoTemplate<
     }
 
     input.$global = $global;
+  }
+
+  if ($global.cspNonce) {
+    // However, if a nonce is given, we'll create a new redirect fn w/ nonce
+    // This is a bit awkward, but we don't otherwise have a handle to $global
+    this.redirect = createRedirectWithMidstreamSupportFn($global);
   }
 
   this.set("Content-Type", "text/html; charset=utf-8");

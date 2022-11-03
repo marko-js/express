@@ -80,6 +80,15 @@ Then later in a template access via:
 
 Allows `res.redirect` to redirect HTML responses that have already begun sending content. This is done by flushing a `<meta>` tag redirect with a `<script>` fallback before prematurely ending the response.
 
+If `$global` includes a `cspNonce` it will be included in the redirect script.
+
+```js
+app.get("/", (req, res) => {
+  // <script nonce="xyz">
+  res.marko(Template, { $global: { cspNonce: 'xyz' }});
+});
+```
+
 # Code of Conduct
 
 This project adheres to the [eBay Code of Conduct](./.github/CODE_OF_CONDUCT.md). By participating in this project you agree to abide by its terms.
