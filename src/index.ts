@@ -1,6 +1,10 @@
 import type { EventEmitter } from "events";
 import type { Request, Response, NextFunction } from "express";
-import { redirectWithMidstreamSupport } from "./redirect";
+import {
+  kCSPNonce,
+  redirectWithMidstreamSupport,
+  ResponseWithInternals,
+} from "./redirect";
 
 // newer versions of `@types/express`
 declare module "express-serve-static-core" {
@@ -19,6 +23,8 @@ declare module "express" {
 export default function middleware() {
   return (_req: Request, res: Response, next: NextFunction): void => {
     res.marko = renderMarkoTemplate;
+    // We don't have a handle to the cspNonce, if any so we start with
+    // a default function which may generate a script with no nonce attr
     res.redirect = redirectWithMidstreamSupport;
     next();
   };
@@ -27,7 +33,7 @@ export default function middleware() {
 function renderMarkoTemplate<
   I extends Record<string, unknown> & { $global?: Record<string, unknown> },
   T extends { render(input: I, ...args: unknown[]): EventEmitter }
->(this: Response, template: T, input?: I) {
+>(this: ResponseWithInternals, template: T, input?: I) {
   const $global = { ...this.app.locals, ...this.locals };
 
   if (input) {
@@ -38,6 +44,7 @@ function renderMarkoTemplate<
     input.$global = $global;
   }
 
+  this[kCSPNonce] = $global.cspNonce;
   this.set("Content-Type", "text/html; charset=utf-8");
   template
     .render(input || ({ $global } as I), this)
