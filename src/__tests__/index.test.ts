@@ -149,7 +149,7 @@ test("Midstream Redirect, HTML", async () => {
   expect(html).toMatchInlineSnapshot(`"You need to login!"`);
 });
 
-test("Midstream Redirect, HTML, nonce", async () => {
+test("Midstream Redirect, HTML, nonce in res.marko $global", async () => {
   let spy;
   await fetchHtml(
     express()
@@ -173,6 +173,34 @@ test("Midstream Redirect, HTML, nonce", async () => {
 
   expect(spy).toHaveBeenCalledWith(
     expect.stringContaining('<script nonce="xyz">')
+  );
+});
+
+test("Midstream Redirect, HTML, nonce in res.locals", async () => {
+  let spy;
+  await fetchHtml(
+    express()
+      .use(markoMiddleware())
+      .use((req, res) => {
+        if (req.url === "/login.html") {
+          return res.end("You need to login!");
+        }
+
+        const promise = new Promise((resolve) => {
+          setTimeout(() => {
+            spy = jest.spyOn(res, "write");
+            res.redirect("/login.html");
+            resolve("hello");
+          }, 50);
+        });
+
+        res.locals.cspNonce = "abc";
+        res.marko(AsyncTemplate, { promise });
+      })
+  );
+
+  expect(spy).toHaveBeenCalledWith(
+    expect.stringContaining('<script nonce="abc">')
   );
 });
 
