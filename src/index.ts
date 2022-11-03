@@ -1,8 +1,9 @@
 import type { EventEmitter } from "events";
 import type { Request, Response, NextFunction } from "express";
 import {
-  createRedirectWithMidstreamSupportFn,
+  kCSPNonce,
   redirectWithMidstreamSupport,
+  ResponseWithInternals,
 } from "./redirect";
 
 // newer versions of `@types/express`
@@ -32,7 +33,7 @@ export default function middleware() {
 function renderMarkoTemplate<
   I extends Record<string, unknown> & { $global?: Record<string, unknown> },
   T extends { render(input: I, ...args: unknown[]): EventEmitter }
->(this: Response, template: T, input?: I) {
+>(this: ResponseWithInternals, template: T, input?: I) {
   const $global = { ...this.app.locals, ...this.locals };
 
   if (input) {
@@ -43,12 +44,7 @@ function renderMarkoTemplate<
     input.$global = $global;
   }
 
-  if ($global.cspNonce) {
-    // However, if a nonce is given, we'll create a new redirect fn w/ nonce
-    // This is a bit awkward, but we don't otherwise have a handle to $global
-    this.redirect = createRedirectWithMidstreamSupportFn($global);
-  }
-
+  this[kCSPNonce] = $global.cspNonce;
   this.set("Content-Type", "text/html; charset=utf-8");
   template
     .render(input || ({ $global } as I), this)
