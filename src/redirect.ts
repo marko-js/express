@@ -1,7 +1,9 @@
 import type { Response } from "express";
 import { ServerResponse } from "http";
 
-export function createRedirectWithMidstreamSupportFn({ cspNonce }: { cspNonce?: string; } = {}) {
+export function createRedirectWithMidstreamSupportFn({
+  cspNonce,
+}: { cspNonce?: string } = {}) {
   function redirectWithMidstreamSupport(
     this: Response,
     status: number,
@@ -23,7 +25,7 @@ export function createRedirectWithMidstreamSupportFn({ cspNonce }: { cspNonce?: 
   ) {
     const status = typeof p1 === "number" ? p1 : 302;
     const redirectUrl = typeof p1 === "string" ? p1 : (p2 as string);
-    const nonce = cspNonce ? ` nonce="${cspNonce}"` : '';
+    const nonce = cspNonce ? ` nonce="${cspNonce}"` : "";
 
     if (
       this.headersSent &&
@@ -31,7 +33,6 @@ export function createRedirectWithMidstreamSupportFn({ cspNonce }: { cspNonce?: 
         "text/html"
       )
     ) {
-
       // already begun response, so we can't redirect with a status code
       // but it is text/html, so we can redirect using <meta> refresh or location.href
       // and destroy the stream once the response is flushed
@@ -60,7 +61,8 @@ export function createRedirectWithMidstreamSupportFn({ cspNonce }: { cspNonce?: 
   return redirectWithMidstreamSupport;
 }
 
-export const redirectWithMidstreamSupport = createRedirectWithMidstreamSupportFn();
+export const redirectWithMidstreamSupport =
+  createRedirectWithMidstreamSupportFn();
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 function noopThis(this: any) {

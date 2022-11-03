@@ -1,6 +1,9 @@
 import type { EventEmitter } from "events";
 import type { Request, Response, NextFunction } from "express";
-import { createRedirectWithMidstreamSupportFn, redirectWithMidstreamSupport } from "./redirect";
+import {
+  createRedirectWithMidstreamSupportFn,
+  redirectWithMidstreamSupport,
+} from "./redirect";
 
 // newer versions of `@types/express`
 declare module "express-serve-static-core" {

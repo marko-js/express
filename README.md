@@ -85,7 +85,7 @@ If `$global` includes a `cspNonce` it will be included in the redirect script.
 ```js
 app.get("/", (req, res) => {
   // <script nonce="xyz">
-  res.marko(Template, { $global: { cspNonce: 'xyz' }});
+  res.marko(Template, { $global: { cspNonce: "xyz" } });
 });
 ```
 

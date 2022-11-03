@@ -161,17 +161,19 @@ test("Midstream Redirect, HTML, nonce", async () => {
 
         const promise = new Promise((resolve) => {
           setTimeout(() => {
-            spy = jest.spyOn(res, 'write');
+            spy = jest.spyOn(res, "write");
             res.redirect("/login.html");
             resolve("hello");
           }, 50);
         });
 
-        res.marko(AsyncTemplate, { $global: {cspNonce: 'xyz' }, promise });
+        res.marko(AsyncTemplate, { $global: { cspNonce: "xyz" }, promise });
       })
   );
 
-  expect(spy).toHaveBeenCalledWith(expect.stringContaining('<script nonce="xyz">'));
+  expect(spy).toHaveBeenCalledWith(
+    expect.stringContaining('<script nonce="xyz">')
+  );
 });
 
 test("Midstream Redirect, HTML, compression", async () => {
