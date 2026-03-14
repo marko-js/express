@@ -56,7 +56,7 @@
   "module": "./dist/index.mjs",
   "peerDependencies": {
     "express": "^4 || ^5",
-    "marko": "^4 || ^5"
+    "marko": "4 - 6"
   },
   "repository": {
     "type": "git",
